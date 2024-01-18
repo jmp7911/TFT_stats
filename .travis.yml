@@ -1,5 +1,6 @@
 language: python
 os: linux
+dist: jammy
 branches:
   only:
     - main
