@@ -5,6 +5,7 @@ branches:
     - main
     - dev
 matrix:
+  python: - "3.10"
   python: - "3.11"
   python: - "3.12"
 jobs:
