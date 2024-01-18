@@ -4,9 +4,9 @@ branches:
   only:
     - main
     - dev
-python:
-  - "3.11-dev"
-  - "3.12-dev"
+matrix:
+  python: - "3.11"
+  python: - "3.12"
 jobs:
   install: 
     - python -m pip install --upgrade pip
