@@ -5,8 +5,8 @@ branches:
     - main
     - dev
 matrix:
-  - python: "3.11"
-  - python: "3.12"
+  - python: "3.11.0"
+  - python: "3.12.6"
 jobs:
   install: 
     - python -m pip install --upgrade pip
