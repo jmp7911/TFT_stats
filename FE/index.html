@@ -1,0 +1,133 @@
+
+  <div class="container-sm">
+    <div class="row">
+      <h2 class="main-title">게시판</h2>
+
+      <div class="d-flex justify-content-between">
+        <p class="main-desc"><strong>{{ count }} 개</strong>의 게시글이 있습니다.</p>
+        <div class="p-2">
+          <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <form>
+                  <div class="d-flex">
+                    <select class="form-select me-2" name="category" id="category">
+                      <option value="">전체</option>
+                      {% for cate in category %}
+                      <option value="{{cate.id}}" {% if cate.is_sel_category %}selected{% endif %}>{{cate}}</option>
+                      {% endfor %}
+                    </select>
+                    <input class="form-control me-2 flex-grow-2" id="search" type="search" name="search" value="{{search}}" placeholder="search" >
+                    <button class="btn btn-outline-success me-2" type="submit">Search</button>
+                    <label for="sort" class="a11y-hidden">정렬</label>
+                    <select class="form-select me-2" id="sort" name="sort" onchange="form.submit()">
+                      <option value="hits" {% if sort == 'hits' %}selected{% endif %}>조회순</option>
+                      <option value="created_at" {% if sort == 'created_at' %}selected{% endif %}>최신순</option>
+                    </select>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
+    <!-- 게시판 리스트 -->
+    <div class="">
+      {% block postList %}
+        <div class="row text-center">
+        <!-- 게시글이 없을때 / 검색한 게시글이 없을때 -->
+        {% if not post_list %}
+        <div class="col text-center">
+        등록된 게시물이 없습니다.
+        </div>
+        {% else %}
+        <!-- 게시글이 있을때 -->
+        {% for post in post_list %}
+          <div class="col-lg-4 col-md-4 col-sm-4 mb-4">
+            {% if request.user.is_authenticated %}
+            <div class="d-inline align-self-start p-1">
+              <input type="checkbox" class="post_check" value="{{post.id}}">
+            </div>
+            {% endif %}
+            <div class="card" style="height:332px">
+              <a href="{{post.get_absolute_url}}" class="overflow-hidden"><img src="{% if post.image_upload %}{{ post.image_upload.url }}{% endif %}" class="card-img-top" alt="..."></a>
+              <div class="card-body border-top">
+                <h5 class="card-title"><a href="{{post.get_absolute_url}}">{{post.title}}
+                </a></h5>
+                <div class="d-flex justify-content-between align-items-center">
+                  <p class="p-2">{{ post.created_at|date:'Y.m.d H:i:s' }}</p>
+                </div>
+                <div class="d-flex justify-content-between align-items-center border-top">
+                  {{ post.user.get_image_tag }}
+                  <span class="p-2">{{ post.user.nickname }}</span>
+                  <div class="d-flex align-items-center flex-grow-2">
+                    <span class="p-2 m-1 badge bg-secondary">{% bs_icon 'eye' %}{{post.hits|intcomma}}</span>
+                    <span class="p-2 m-1 badge bg-secondary">{% bs_icon 'chat-left-text' %}{{post.number_of_comments|intcomma}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          {% endif %}
+        </div>
+      {% endblock postList %}
+    </div>
+    <!-- //게시판 리스트 -->
+    <div class="board-bottom">
+      <!-- 페이지 -->
+      {% block pagination %}
+      {% if is_paginated %}
+        <nav aria-label="Page navigation">
+        <ul class="pagination">
+          {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}">{% bs_icon 'chevron-compact-left' %}</a></li>
+          {% endif %}
+          {% for page_num in paginator.get_elided_page_range %}
+            <li class="page-item {% if page_num == page_obj.number %}active{% endif %}"
+            {% if page_num == page_obj.number %}aria-current="page"{% endif %}
+            ><a href="{{ request.path }}?page={{ page_num }}" class="page-link">{{ page_num }}</a></li>
+          {% endfor %}
+          {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}">{% bs_icon 'chevron-compact-right' %}</a></li>
+          {% endif %}
+        </ul>
+        </nav>
+      {% endif %}
+    {% endblock pagination %}
+      <!-- //페이지 -->
+      <div class="btn-group">
+        {% if user.is_staff %}
+        <button class="btn btn-outline-danger me-2" type="button" onclick="sel_delete()">선택삭제</button>
+        {% endif %}
+        <a href="{% url "write" %}" class="btn btn-outline-secondary" role="button">글쓰기</a>
+      </div>
+    </div>
+  </div>
+  <script>
+    function sel_delete() {
+      ids = []
+      document.querySelectorAll('.post_check:checked').forEach((item, index) => {
+        ids.push(Number(item.value))
+      })
+      
+      
+      if (ids.length < 1) {
+        alert('선택 삭제할 항목이 없습니다.')
+        return;
+      }
+      $.ajax({
+        url: '{% url "deleteMultiple" %}',
+        type: 'POST',
+        data: {'data': ids, 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+        success: function() {
+          window.location.reload()
+        }, error: function(xhr,errmsg,err) {
+          console.log(xhr.status + ": " + xhr.responseText); 
+        }
+      })
+      
+    }
+  </script>
+{% endblock 'contents' %}
