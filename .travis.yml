@@ -11,6 +11,9 @@ matrix:
 install: 
     - python -m pip install --upgrade pip
     - pip install -r requirements.txt
-  
+    
 script:
-  - python blog/manage.py test
+  - cd blog
+  - coverage run manage.py test
+  - coverage report
+
