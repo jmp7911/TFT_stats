@@ -1,3 +1,4 @@
+import json
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
 
@@ -19,7 +20,7 @@ class UserTest(TestCase):
             "email": "test@example.com",
             "password": "test1234!",
         }
-        
+        self.test_register()
         
         
     def test_register(self):
@@ -34,6 +35,7 @@ class UserTest(TestCase):
             print(response.data)
         self.assertEqual(response.status_code, 201)
         self.token = response.data["access"]
+        self.user = response.data["user"]
         self.headers = {}
         self.headers["Authorization"] = "Bearer " + self.token
         
@@ -51,26 +53,45 @@ class UserTest(TestCase):
         self.assertEqual(response.status_code, 200)
     
 class PostTest(UserTest):
-  def setUp(self):
-    self.base_url = "http://localhost:8000"
-    self.post0001 = {
-      'title': 'test',
-      'content': 'test'
-    }
-    self.test_register()
   def test_post(self):
     """
     모든 페이지 접속 가능 확인
     """
+    self.post0001 = {
+      'title': 'test',
+      'content': 'test',
+      'user': self.user["pk"]
+    }
+    print("---------test_post_list---------")
     res = self.client.get('http://localhost:8000/blog/', headers=self.headers)
     self.assertEquals(res.status_code, 200)
 
+    print("---------test_post_create---------")
     res = self.client.post('http://localhost:8000/blog/', headers=self.headers, data=self.post0001)
-    print(res.json())
+    if res.status_code != 201:
+      print("---------test_post_create-----response.data---------")
+      print(res.data)
     self.assertEquals(res.status_code, 201)
+    self.post0001["id"] = res.data["id"]
 
-    res = self.client.get('http://localhost:8000/blog/1',headers=self.headers)
-    self.assertNotEquals(res.status_code, 404)
+    print("---------test_post_detail---------")
+    res = self.client.get(f'http://localhost:8000/blog/{self.post0001["id"]}/',headers=self.headers)
+    if res.status_code != 200:
+      print("---------test_post_detail-----response.data---------")
+      print(res.data)
+    self.assertEquals(res.status_code, 200)
 
-    res = self.client.delete('http://localhost:8000/blog/1',headers=self.headers)
+    print("---------test_post_update---------")
+    self.headers["Content-Type"] = "application/json"
+    res = self.client.patch(f'http://localhost:8000/blog/{self.post0001["id"]}/',headers=self.headers, data=json.dumps({"title": "test2"}))
+    if res.status_code != 200:
+      print("---------test_post_update-----response.data---------")
+      print(res.data)
+    self.assertEquals(res.status_code, 200)
+    
+    print("---------test_post_delete---------")
+    res = self.client.delete(f'http://localhost:8000/blog/{self.post0001["id"]}/',headers=self.headers)
+    if res.status_code != 204:
+      print("---------test_post_delete-----response.data---------")
+      print(res.data)
     self.assertEquals(res.status_code, 204)
