@@ -1,13 +1,12 @@
 import logging
 from django.db import models
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 from abc import abstractmethod
 from django.utils.translation import gettext_lazy as _
-from django_tuieditor.models import MarkdownField
-from django_tuieditor.widgets import MarkdownEditorWidget
 
-User = settings.AUTH_USER_MODEL
+User = get_user_model()
 logger = logging.getLogger(__name__)
 
 class BaseModel(models.Model):
@@ -41,7 +40,7 @@ class Tag(models.Model):
 
 class Post(BaseModel):
   title = models.CharField(max_length=100)
-  content = MarkdownField()
+  content = models.TextField()
   image_upload = models.ImageField(verbose_name='이미지',upload_to='blog/%Y/%m/%d/', blank=True, null=True)
   file_upload = models.FileField(verbose_name='파일',upload_to='file/%Y/%m/%d/', blank=True, null=True)
   created_at = models.DateTimeField(auto_now_add=True)
