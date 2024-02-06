@@ -36,10 +36,8 @@ class CustomUserManager(UserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     # DB에 저장할 데이터를 선언
-    username = models.CharField("사용자 계정", max_length=20, blank=True, null=True)
     password = models.CharField("비밀번호", max_length=128)  # 해시되기 때문에 max_length가 길어야함
     email = models.EmailField("이메일", max_length=50, unique=True)
-    nickname = models.CharField("닉네임",max_length=50, unique=True)
     
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -53,7 +51,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
     
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['nickname']
     
     def __str__(self):
       return self.email
