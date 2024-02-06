@@ -63,7 +63,7 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email' # 로그인 인증 수단
 ACCOUNT_EMAIL_VERIFICATION = 'none' # email 인증 필수 여부
 
 REST_AUTH = {
-    'LOGIN_SERIALIZER': 'accounts.serializers.UserLoginSerializer',
+    'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.LoginSerializer',
     'TOKEN_SERIALIZER': 'dj_rest_auth.serializers.TokenSerializer',
     'JWT_SERIALIZER': 'dj_rest_auth.serializers.JWTSerializer',
     'JWT_SERIALIZER_WITH_EXPIRATION': 'dj_rest_auth.serializers.JWTSerializerWithExpiration',
