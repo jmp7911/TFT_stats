@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     # django apps
     'blog',
     'accounts',
+    'summoners',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'  # 추가
