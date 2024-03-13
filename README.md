@@ -48,15 +48,20 @@ section 기획
     화면설계        :a3, 2024-03-11, 2d
     DB 모델링        :a4, after a3, 1d
 
-section 개발
+section BE 개발
     기능 명세        :b1, after a4, 2d
     CI            :b2, after b1, 2d
     CD            :b3, after b2, 2d
-    기능 1        :b4, after b3, 3d
-    기능 2        :b5, after b4, 3d
+    소환사 검색        :b4, after d0, 3d
+    통계        :b5, after d1, 3d
+    히스토리    : b6, after d2, 3d
 
+section FE 개발
+    메인           : d0, after b3, 3d
+    chart        : d1, after b4, 3d
+    Image CDN        : d2, after b5, 3d
 section 운영
-    배포            :c1, after b5, 1d
+    배포            :c1, after b6, 1d
 ```
 
 ---
@@ -64,7 +69,7 @@ section 운영
 ### 기능 정의
 
 | Depth 1       | Depth 2       | Depth 3 | Title       | Description                                             | Features                        |
-| ------------- | ------------- | ------- | ----------- | ------------------------------------------------------- | ------------------------------- |
+| --------------- | --------------- | --------- | ------------- | --------------------------------------------------------- | --------------------------------- |
 | 메인          |               |         | 소환사 검색 | 소환사를 검색합니다.                                    | Riot Games TFT API              |
 | 소환사 페이지 |               |         | 통계지표    | 시간별, 요일별 및 연속게임 수에 대한 지표를 제공합니다. | Riot Games TFT API              |
 | 마이페이지    | 로그인        |         | 로그인      | 소셜 로그인 기능                                        | Discord, Riot Games 소셜 로그인 |
@@ -74,3 +79,6 @@ section 운영
 ---
 
 ### 화면 설계
+
+
+
