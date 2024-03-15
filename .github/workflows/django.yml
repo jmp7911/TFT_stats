@@ -1,4 +1,6 @@
 name: Django CI
+env:
+  DJANGO_SECRET_KEY: ${{secrets.DJANGO_SECRET_KEY}}
 
 on:
   push:
