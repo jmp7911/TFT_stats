@@ -1,7 +1,8 @@
 name: Django CI
 env:
   DJANGO_SECRET_KEY: ${{secrets.DJANGO_SECRET_KEY}}
-
+  DEBUG: ${{secrets.DEBUG}}
+  DJANGO_SETTINGS_MODULE: ${{secrets.DJANGO_SETTINGS_MODULE}}
 on:
   push:
     branches: [ "dev" ]
