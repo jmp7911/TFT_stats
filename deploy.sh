@@ -1,3 +1,4 @@
+#!/bin/bash
 set -e
 
 # .env 파일 생성
