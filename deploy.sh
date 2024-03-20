@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # 모듈 설치
+python3 -m pip install --upgrade pip
 pip3 install -r requirements.txt
 
 # DB 마이그레이션
