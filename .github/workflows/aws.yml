@@ -37,7 +37,12 @@ env:
   LIGHTSAIL_SSH_KEY: ${{ secrets.LIGHTSAIL_SSH_KEY }}
   LIGHTSAIL_HOST: ${{ secrets.LIGHTSAIL_HOST }}
   LIGHTSAIL_USERNAME: ${{ secrets.LIGHTSAIL_USERNAME }}
-                                               # containerDefinitions section of your task definition
+  DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY}}
+  DJANGO_SETTINGS_MODULE: ${{ secrets.DJANGO_SETTINGS_MODULE}}
+  DEBUG: ${{ secrets.DEBUG}}
+  RIOT_API_DEVELOPMENT_KEY: ${{ secrets.RIOT_API_DEVELOPMENT_KEY}}
+  RIOT_API_KEY: ${{ secrets.RIOT_API_KEY}}
+  SUMMONER_URL: ${{ secrets.SUMMONER_URL}}
 
 permissions:
   contents: read
@@ -79,4 +84,15 @@ jobs:
         host: ${{ secrets.LIGHTSAIL_HOST }}
         key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
         script_stop: true
-        script: chmod +x /home/ubuntu/blog/deploy.sh && bash /home/ubuntu/blog/deploy.sh
+        script: |
+          # .env 파일 생성
+          echo DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }} > .env
+          echo DJANGO_SETTINGS_MODULE=${{ secrets.DJANGO_SETTINGS_MODULE }} >> .env
+          echo DEBUG=${{ secrets.DEBUG }} >> .env
+          echo RIOT_API_DEVELOPMENT_KEY=${{ secrets.RIOT_API_DEVELOPMENT_KEY }} >> .env
+          echo RIOT_API_KEY=${{ secrets.RIOT_API_KEY }} >> .env
+          echo SUMMONER_URL=${{ secrets.SUMMONER_URL }} >> .env
+          
+          # script 실행
+          chmod +x /home/ubuntu/blog/deploy.sh && bash /home/ubuntu/blog/deploy.sh
+
