@@ -28,16 +28,13 @@ name: Deploy to Amazon ECS
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "main" ]
 
 env:
-  AWS_REGION: MY_AWS_REGION                   # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: MY_ECR_REPOSITORY           # set this to your Amazon ECR repository name
-  ECS_SERVICE: MY_ECS_SERVICE                 # set this to your Amazon ECS service name
-  ECS_CLUSTER: MY_ECS_CLUSTER                 # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: MY_ECS_TASK_DEFINITION # set this to the path to your Amazon ECS task definition
-                                               # file, e.g. .aws/task-definition.json
-  CONTAINER_NAME: MY_CONTAINER_NAME           # set this to the name of the container in the
+  AWS_REGION: ${{secrets.AWS_REGION}}                   # set this to your preferred AWS region, e.g. us-west-1
+  LIGHTSAIL_SSH_KEY: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+  LIGHTSAIL_HOST: ${{ secrets.LIGHTSAIL_HOST }}
+  LIGHTSAIL_USERNAME: ${{ secrets.LIGHTSAIL_USERNAME }}
                                                # containerDefinitions section of your task definition
 
 permissions:
@@ -53,6 +50,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    # AWS 인증을 시작합니다.
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -60,35 +58,17 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+    # AWS 인증이 완료되었는지 테스트합니다.
+    - name: AWS Lightsail에 연결되었는지 확인
+      run: aws configure list
 
-    - name: Build, tag, and push image to Amazon ECR
-      id: build-image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        # Build a docker container and
-        # push it to ECR so that it can
-        # be deployed to ECS.
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
-    - name: Fill in the new image ID in the Amazon ECS task definition
-      id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      with:
-        task-definition: ${{ env.ECS_TASK_DEFINITION }}
-        container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ steps.build-image.outputs.image }}
-
-    - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: ${{ env.ECS_SERVICE }}
-        cluster: ${{ env.ECS_CLUSTER }}
-        wait-for-service-stability: true
+    # 배포 자동화를 시작합니다.
+    # - name: 배포 자동화
+    #   uses: appleboy/scp-action@master
+    #   with:
+    #     host: ${{ secrets.AWS_HOST }}
+    #     username: ${{env.LIGHTSAIL_USERNAME}}
+    #     key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+    #     source: 'blog/*'
+    #     strip_components: 1
+    #     target: '/home/ubuntu/{blog}/blog'
