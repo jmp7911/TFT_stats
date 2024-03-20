@@ -1,7 +1,7 @@
 set -e
 
 # .env 파일 생성
-echo DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }} >> .env
+echo DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }} > .env
 echo DJANGO_SETTINGS_MODULE=${{ secrets.DJANGO_SETTINGS_MODULE }} >> .env
 echo DEBUG=${{ secrets.DEBUG }} >> .env
 echo RIOT_API_DEVELOPMENT_KEY=${{ secrets.RIOT_API_DEVELOPMENT_KEY }} >> .env
