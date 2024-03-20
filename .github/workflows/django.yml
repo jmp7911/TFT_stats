@@ -5,6 +5,7 @@ env:
   DJANGO_SETTINGS_MODULE: ${{secrets.DJANGO_SETTINGS_MODULE}}
   RIOT_API_DEVELOPMENT_KEY: ${{secrets.RIOT_API_DEVELOPMENT_KEY}}
   RIOT_API_KEY: ${{secrets.RIOT_API_KEY}}
+  SUMMONER_URL: ${{secrets.SUMMONER_URL}}
 on:
   push:
     branches: [ "dev" ]
