@@ -3,6 +3,8 @@ env:
   DJANGO_SECRET_KEY: ${{secrets.DJANGO_SECRET_KEY}}
   DEBUG: ${{secrets.DEBUG}}
   DJANGO_SETTINGS_MODULE: ${{secrets.DJANGO_SETTINGS_MODULE}}
+  RIOT_API_DEVELOPMENT_KEY: ${{secrets.RIOT_API_DEVELOPMENT_KEY}}
+  RIOT_API_KEY: ${{secrets.RIOT_API_KEY}}
 on:
   push:
     branches: [ "dev" ]
