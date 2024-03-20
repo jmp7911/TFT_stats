@@ -85,13 +85,15 @@ jobs:
         key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
         script_stop: true
         script: |
+          # blog 디렉토리로 이동
+          cd blog
           # .env 파일 생성
-          echo DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }} > .env
-          echo DJANGO_SETTINGS_MODULE=${{ secrets.DJANGO_SETTINGS_MODULE }} >> .env
-          echo DEBUG=${{ secrets.DEBUG }} >> .env
-          echo RIOT_API_DEVELOPMENT_KEY=${{ secrets.RIOT_API_DEVELOPMENT_KEY }} >> .env
-          echo RIOT_API_KEY=${{ secrets.RIOT_API_KEY }} >> .env
-          echo SUMMONER_URL=${{ secrets.SUMMONER_URL }} >> .env
+          echo DJANGO_SECRET_KEY=${{ env.DJANGO_SECRET_KEY }} > .env
+          echo DJANGO_SETTINGS_MODULE=${{ env.DJANGO_SETTINGS_MODULE }} >> .env
+          echo DEBUG=${{ env.DEBUG }} >> .env
+          echo RIOT_API_DEVELOPMENT_KEY=${{ env.RIOT_API_DEVELOPMENT_KEY }} >> .env
+          echo RIOT_API_KEY=${{ env.RIOT_API_KEY }} >> .env
+          echo SUMMONER_URL=${{ env.SUMMONER_URL }} >> .env
           
           # script 실행
           chmod +x /home/ubuntu/blog/deploy.sh && bash /home/ubuntu/blog/deploy.sh
