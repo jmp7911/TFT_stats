@@ -79,4 +79,4 @@ jobs:
         host: ${{ secrets.LIGHTSAIL_HOST }}
         key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
         script_stop: true
-        script: chmod +x /home/ubuntu/blog/deploy.sh && sh /home/ubuntu/blog/deploy.sh
+        script: chmod +x /home/ubuntu/blog/deploy.sh && bash /home/ubuntu/blog/deploy.sh
