@@ -1,0 +1,21 @@
+language: python
+os: linux
+dist: jammy
+branches:
+  only:
+    - main
+    - dev
+matrix:
+  - python: "3.11"
+  - python: "3.12"
+install: 
+    - python -m pip install --upgrade pip
+    - pip install -r requirements.txt
+    
+script:
+  - cd blog
+  - python manage.py makemigrations
+  - python manage.py migrate
+  - coverage run manage.py test
+  - coverage report
+
