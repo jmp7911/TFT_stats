@@ -10,7 +10,7 @@ python3 manage.py migrate
 
 # 커버리지 설정파일 생성
 echo "[run]" > .coveragerc
-echo "omit = /usr/*, venv/*, manage.py, config/*, */migrations/*, */tests/*, */__init__.py" >> .coveragerc
+echo "omit = venv/*, manage.py, config/*, */migrations/*, */tests/*, */__init__.py" >> .coveragerc
 
 # 코드 커버리지
 coverage run manage.py test
