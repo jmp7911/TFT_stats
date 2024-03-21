@@ -20,4 +20,4 @@ coverage report
 python3 manage.py collectstatic --noinput
 
 # gunicorn 재실행
-# sudo systemctl restart gunicorn.service
+sudo systemctl restart gunicorn.service
