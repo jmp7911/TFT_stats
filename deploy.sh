@@ -8,6 +8,14 @@ pip3 install -r requirements.txt
 python3 manage.py makemigrations
 python3 manage.py migrate
 
+# 커버리지 설정파일 생성
+echo "[run]" > .coveragerc
+echo "omit = venv/*, manage.py, config/*, */migrations/*, */tests/*, */__init__.py" >> .coveragerc
+
+# 코드 커버리지
+coverage run manage.py test
+coverage report
+
 # 정적 파일 수집
 python3 manage.py collectstatic --noinput
 

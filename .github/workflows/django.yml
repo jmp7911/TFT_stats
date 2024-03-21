@@ -34,5 +34,9 @@ jobs:
     - name: Run Tests
       run: |
         cd blog
-        python manage.py test
+        python manage.py makemigrations
+        python manage.py migrate
+        coverage run manage.py test
+        coverage report
+        
     
