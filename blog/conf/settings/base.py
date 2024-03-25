@@ -1,6 +1,7 @@
 import os
 import environ
 from pathlib import Path
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -42,26 +43,37 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',
     'allauth',
     'allauth.account',
+    'allauth.socialaccount',
     'bootstrap5',
     'django_bootstrap_icons',
     'drf_spectacular',
     'corsheaders',
+    
+    # Crispy Forms
+    "crispy_forms",
+    "crispy_bootstrap5",
+    
+    # Google Providers
+    'allauth.socialaccount.providers.google',
     # django apps
     'blog',
-    'accounts',
+    # 'accounts',
     'summoners',
+    'apps',
+    'pages',
+    'components',
 ]
 
-AUTH_USER_MODEL = 'accounts.User'  # 추가
+# AUTH_USER_MODEL = 'accounts.User'  # 추가
 
 SITE_ID = 1
 
-ACCOUNT_UNIQUE_EMAIL = True # User email unique 사용 여부
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None # 사용자 이름 필드 지정
-ACCOUNT_USERNAME_REQUIRED = False # User username 필수 여부
-ACCOUNT_EMAIL_REQUIRED = True # User email 필수 여부
-ACCOUNT_AUTHENTICATION_METHOD = 'email' # 로그인 인증 수단
-ACCOUNT_EMAIL_VERIFICATION = 'none' # email 인증 필수 여부
+# ACCOUNT_UNIQUE_EMAIL = True # User email unique 사용 여부
+# ACCOUNT_USER_MODEL_USERNAME_FIELD = None # 사용자 이름 필드 지정
+# ACCOUNT_USERNAME_REQUIRED = False # User username 필수 여부
+# ACCOUNT_EMAIL_REQUIRED = True # User email 필수 여부
+# ACCOUNT_AUTHENTICATION_METHOD = 'email' # 로그인 인증 수단
+# ACCOUNT_EMAIL_VERIFICATION = 'none' # email 인증 필수 여부
 
 REST_AUTH = {
     'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.LoginSerializer',
@@ -128,7 +140,7 @@ ROOT_URLCONF = 'conf.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates',],
         'APP_DIRS': True,
         'OPTIONS': {
             'debug': DEBUG,
@@ -141,6 +153,9 @@ TEMPLATES = [
         },
     },
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 WSGI_APPLICATION = 'conf.wsgi.application'
 
@@ -210,3 +225,54 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ACCOUNT_FORMS = {
+    "login": "conf.forms.UserLoginForm",
+    "signup": "conf.forms.UserRegistrationForm",
+    "change_password": "conf.forms.PasswordChangeForm",
+    "set_password": "conf.forms.PasswordSetForm",
+    "reset_password": "conf.forms.PasswordResetForm",
+    "reset_password_from_key": "conf.forms.PasswordResetKeyForm",
+}
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+    
+]
+
+#  Messages customize
+MESSAGE_TAGS = {
+    messages.DEBUG: "alert-info",
+    messages.INFO: "alert-info",
+    messages.SUCCESS: "alert-success",
+    messages.WARNING: "alert-warning",
+    messages.ERROR: "alert-danger",
+}
+
+#  All Auth Configurations
+LOGIN_REDIRECT_URL = "/"
+LOGIN_URL = "account_login"
+ACCOUNT_LOGOUT_ON_GET = False
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS =True
+
+SOCIALACCOUNT_QUERY_EMAIL = True
+ACCOUNT_UNIQUE_EMAIL = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+
+SITE_ID = 1
+
+# SMTP Configure
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "jmp7911@gmail.com"
+EMAIL_HOST_PASSWORD = "afos burs pglq eusy"
+DEFAULT_FROM_EMAIL = "jmp7911@gmail.com"
