@@ -13,8 +13,8 @@ echo "[run]" > .coveragerc
 echo "omit = venv/*, manage.py, config/*, */migrations/*, */tests/*, */__init__.py" >> .coveragerc
 
 # 코드 커버리지
-coverage run manage.py test
-coverage report
+python3 -m coverage run manage.py test
+python3 -m coverage report
 
 # 정적 파일 수집
 python3 manage.py collectstatic --noinput
