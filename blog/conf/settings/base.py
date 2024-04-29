@@ -276,3 +276,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "jmp7911@gmail.com"
 EMAIL_HOST_PASSWORD = "afos burs pglq eusy"
 DEFAULT_FROM_EMAIL = "jmp7911@gmail.com"
+
+# CORS
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+
