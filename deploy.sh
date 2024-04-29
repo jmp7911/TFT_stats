@@ -1,5 +1,8 @@
 #!/bin/bash
 
+sudo apt update
+sudo apt-get upgrade
+
 # Front 의존성 설치
 yarn install
 gulp
@@ -21,7 +24,7 @@ python3 -m coverage run manage.py test
 python3 -m coverage report
 
 # 정적 파일 수집
-python3 manage.py collectstatic
+python3 manage.py collectstatic --noinput
 
 # gunicorn 재실행
 sudo systemctl restart gunicorn.service
