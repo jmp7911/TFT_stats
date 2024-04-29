@@ -1,6 +1,6 @@
 from .base import *
 
-ALLOWED_HOSTS = ['54.180.146.14']
+ALLOWED_HOSTS = ['54.180.146.14', 'localhost']
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
