@@ -3,10 +3,6 @@
 sudo apt update
 sudo apt-get upgrade
 
-# Front 의존성 설치
-yarn install
-gulp
-
 # 모듈 설치
 python3 -m pip install --upgrade pip
 pip3 install -r requirements.txt
