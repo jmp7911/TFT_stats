@@ -1,0 +1,71 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block title %} Starter {% endblock title %} 
+
+
+{% block main_title %}
+
+<div class="page-title-box">
+    <div class="row align-items-center">
+        <div class="col-md-5">
+            {% block pagetitle %}
+                {% include "partials/page-title.html" with pagetitle="Pages" title="Starter" %}
+            {% endblock pagetitle %}
+   
+        </div><!--end col-->
+        <div class="col-md-auto ms-auto">
+            {% block customizer %}
+                {% include "partials/customizer.html" %}
+            {% endblock customizer %}
+        </div><!--end col-->
+    </div><!--end row-->
+</div>
+    
+{% endblock main_title %}
+
+{% block content %}
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">Dynamic Loaded Chart</h4>
+            </div><!-- end card header -->
+
+            <div class="card-body">
+                <div id="dynamicloadedchart-wrap" dir="ltr">
+                    <div id="chart-year" data-colors='["--tb-primary", "--tb-success", "--tb-warning", "--tb-danger", "--tb-dark", "--tb-info"]' class="apex-charts"></div>
+                    <div id="chart-quarter" class="apex-charts"></div>
+                </div>
+            </div><!-- end card-body -->
+        </div><!-- end card -->
+    </div>
+    <!-- end col -->
+
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">Distributed Columns Chart</h4>
+            </div><!-- end card header -->
+
+            <div class="card-body">
+                <div id="column_distributed" data-colors='["--tb-primary", "--tb-success", "--tb-warning", "--tb-danger", "--tb-dark", "--tb-info"]' class="apex-charts" dir="ltr"></div>
+            </div><!-- end card-body -->
+        </div><!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+<!-- end row -->
+{% endblock content %}
+
+{% block extra_js %}
+
+    <!-- apexcharts -->
+    <script src="{% static 'libs/apexcharts/dist/apexcharts.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.0/dayjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.0/plugin/quarterOfYear.min.js"></script>
+
+    <!-- apexcharts init -->
+    <script src="{% static 'js/pages/apexcharts-column.init.js' %}"></script>
+    
+
+{% endblock extra_js %}  

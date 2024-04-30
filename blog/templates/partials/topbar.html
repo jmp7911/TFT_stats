@@ -37,6 +37,7 @@
     
                 </div>
                 <!-- ========== App Menu ========== -->
+                
                 <div class="app-menu navbar-menu mx-auto opacity-0">
                     <div id="scrollbar">
                         <ul class="navbar-nav" id="navbar-nav">
@@ -596,10 +597,10 @@
                             <i class="bx bx-search align-middle fs-3xl"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0" aria-labelledby="page-header-search-dropdown">
-                            <form class="p-3">
+                            <form class="p-3" method="get" action="{% url 'summoner_list' %}">
                                 <div class="form-group m-0">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Search ..." aria-label="Recipient's username">
+                                        <input type="text" class="form-control" placeholder="플레이어#태그" name="search" aria-label="Recipient's username">
                                         <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
                                     </div>
                                 </div>
@@ -859,6 +860,7 @@
                         </div>
                     </div>
                 </div>
+                
             </div>
         </div>
     </header>

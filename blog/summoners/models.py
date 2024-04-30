@@ -67,3 +67,12 @@ class CompanionDto(models.Model):
     content_ID = models.CharField(max_length=100)
     skin_ID = models.CharField(max_length=100)
     species = models.CharField(max_length=100)
+    
+class SummonerDto(models.Model):
+    account_id = models.CharField(max_length=100)
+    puuid = models.CharField(max_length=100)
+    summoner_id = models.CharField(max_length=100)
+    summoner_name = models.CharField(max_length=100)
+    summoner_level = models.IntegerField()
+    profile_icon_id = models.IntegerField()
+    revision_date = models.BigIntegerField()

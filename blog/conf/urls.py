@@ -45,6 +45,9 @@ urlpatterns = [
     # components
     path('components/',include('components.urls')),
     
+    # summoners
+    path('summoners/',include('summoners.urls')),
+    
     path(
         "account/password/change/",
         login_required(MyPasswordChangeView.as_view()),
