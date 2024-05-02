@@ -1,0 +1,128 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block title %} Starter {% endblock title %} 
+
+
+{% block main_title %}
+
+<div class="page-title-box">
+    <div class="row align-items-center">
+        <div class="col-md-5">
+            {% block pagetitle %}
+                {% include "partials/page-title.html" with pagetitle="Pages" title="Starter" %}
+            {% endblock pagetitle %}
+   
+        </div><!--end col-->
+        <div class="col-md-auto ms-auto">
+            {% block customizer %}
+                {% include "partials/customizer.html" %}
+            {% endblock customizer %}
+        </div><!--end col-->
+    </div><!--end row-->
+</div>
+    
+{% endblock main_title %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body rounded-top py-5 bg-danger-subtle" style="background-image: url(https://img.themesbrand.com/judia/effect-pattern/abc.svg);background-repeat: no-repeat;background-position: right;">
+        <div class="py-5 my-2"></div>
+    </div>
+    <div class="card-body">
+        <div class="mt-n5">
+            <div class="mt-n2 row g-3 g-sm-0 align-items-end gap-3">
+
+                <div class="col-sm-auto">
+                    <div class="position-relative d-inline-block">
+                        <img src="https://img.themesbrand.com/judia/users/avatar-1.jpg" alt="" class="avatar-xl rounded p-1 bg-body-secondary">
+                        <span class="position-absolute profile-dot bg-success rounded-circle"><span class="visually-hidden">unread messages</span></span>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div class="mt-4">
+                        <h5>{{account.gameName}}#{{account.tagLine}} <i class="bi bi-patch-check-fill align-baseline text-info ms-1"></i></h5>
+                        <p class="text-muted mb-3">최근 업데이트: 3시간 전</p>
+                    </div>
+                </div>
+                <div class="col-sm-auto mb-3">
+                    <div class="hstack gap-2">
+                        <button class="btn btn-subtle-success">전적 갱신</button>
+                        <button type="button" class="btn btn-outline-secondary custom-toggle active" data-bs-toggle="button" aria-pressed="false">
+                            <span class="icon-on"><i class="ri-add-line align-bottom me-1"></i> Follow</span>
+                            <span class="icon-off"><i class="ri-user-unfollow-line align-bottom me-1"></i> Unfollow</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-lg-4 g-3 mt-2">
+            <div class="col-lg-3 col-md-6">
+                <div>
+                    <p class="text-muted text-uppercase fs-sm mb-1">Location</p>
+                    <h6 class="mb-0 lh-base fs-md">Los Angeles, California</h6>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div>
+                    <p class="text-muted text-uppercase fs-sm mb-1">Email</p>
+                    <h6 class="mb-0 lh-base fs-md"><a href="mailto:sophiabethany@judia.com" class="text-reset">sophiabethany@judia.com</a></h6>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div>
+                    <p class="text-muted text-uppercase fs-sm mb-1">Phone No</p>
+                    <h6 class="mb-0 lh-base fs-md"><a href="tel:+(254)6172196245" class="text-reset">+(254) 617 219 6245</a></h6>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div>
+                    <p class="text-muted text-uppercase fs-sm mb-1">Website</p>
+                    <h6 class="mb-0 lh-base fs-md"><a href="#!" class="text-reset">www.themesbrand.com</a></h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">Line & Column Charts</h4>
+            </div><!-- end card header -->
+
+            <div class="card-body">
+                <div id="line_column_chart" data-colors='["--tb-primary", "--tb-success"]' class="apex-charts" dir="ltr"></div>
+            </div><!-- end card-body -->
+        </div><!-- end card -->
+    </div>
+    <!-- end col -->
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">Multiple Y-Axis Charts</h4>
+            </div><!-- end card header -->
+
+            <div class="card-body">
+                <div id="multi_chart" data-colors='["--tb-primary", "--tb-info", "--tb-success"]' class="apex-charts" dir="ltr"></div>
+            </div><!-- end card-body -->
+        </div><!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+
+    <!-- apexcharts -->
+    <script src="{% static 'libs/apexcharts/dist/apexcharts.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.0/dayjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.0/plugin/quarterOfYear.min.js"></script>
+
+    <!-- apexcharts init -->
+    <script src="{% static 'js/pages/apexcharts-column.init.js' %}"></script>
+    
+    <!-- mixed charts init -->
+    <script src="{% static 'js/pages/apexcharts-mixed.init.js' %}"></script>
+
+{% endblock extra_js %}  

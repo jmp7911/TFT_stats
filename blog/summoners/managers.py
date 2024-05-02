@@ -2,14 +2,18 @@ import requests
 import os
 from .models import SummonerDto
 
+SUMMONER_URL='https://kr.api.riotgames.com/tft/summoner/v1/summoners/'
+ACCOUNT_URL='https://asia.api.riotgames.com/riot/account/v1/accounts/by-riot-id/'
+MATCH_URL='https://asia.api.riotgames.com/tft/match/v1/matches/'
+LEAGUE_URL='https://kr.api.riotgames.com/tft/league/v1/entries/'
 class SummonerManager:
     '''
     소환사 정보를 가져오는 클래스
     '''
-    summoner_url = os.environ.get('SUMMONER_URL')
-    account_url = os.environ.get('ACCOUNT_URL')
-    match_url = os.environ.get('MATCH_URL')
-    league_url = os.environ.get('LEAGUE_URL')
+    summoner_url = SUMMONER_URL
+    account_url = ACCOUNT_URL
+    match_url = MATCH_URL
+    league_url = LEAGUE_URL
     season_startTime = {"11" : 1710892800}
     headers = {}
     headers['Content-Type'] = 'application/json'
@@ -29,6 +33,19 @@ class SummonerManager:
                 raise Exception("Failed to get a summoner.", response.json())
             manager.summoner = response.json()
             return response.json()
+        return wrapper
+    
+    def get_match(func):
+        def wrapper(*args, **kwargs):
+            match_ids = func(*args, **kwargs)
+            manager = args[0]
+            total_match = []
+            for match_id in match_ids:
+                response = requests.get(f"{manager.match_url}{match_id}", headers=manager.headers)
+                if response.status_code != 200:
+                    raise Exception("Failed to get a match info.", response.json())
+                total_match.append(response.json())
+            return total_match
         return wrapper
     '''
     function
@@ -52,6 +69,7 @@ class SummonerManager:
         return response.json()
     
     # 소환사의 게임 정보를 가져오는 함수
+    @get_match
     def get_match_ids(self):
         if self.summoner is None:
             raise Exception("Summoner is not set.")
@@ -77,4 +95,4 @@ class SummonerManager:
         if response.status_code != 200:
             raise Exception("Failed to get a league.", response.json())
         return response.json()
-        
+    

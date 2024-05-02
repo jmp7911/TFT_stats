@@ -95,11 +95,11 @@ class SummonerTest(APITestCase):
         self.assertEqual(summoner["freshBlood"], False)
         self.assertEqual(summoner["hotStreak"], True)
         
-    @patch("requests.get")
-    def test_get_match_ids(self, mock_get):
-        response = mock_get.return_value
-        response.status_code = 200
-        response.json.return_value = [] # KR_7002143070
+    # @patch("requests.get")
+    def test_get_match_ids(self):
+        # response = mock_get.return_value
+        # response.status_code = 200
+        # response.json.return_value = [] # KR_7002143070
         
         match_ids = self.manager.get_match_ids()
         

@@ -5,7 +5,7 @@ from .managers import SummonerManager
 
 
 class SummonerListView(TemplateView):
-    template_name = 'summoners/list.html'
+    template_name = 'summoners/stats.html'
     
     
     def get(self, request, *args, **kwargs):
@@ -17,8 +17,10 @@ class SummonerListView(TemplateView):
         gameName = search[0]
         summoner = manager.get_summoner_by_account(tagLine, gameName)
         
-        self.extra_context = {'summoner': summoner}
+        self.extra_context = {}
+        self.extra_context['account'] = {'tagLine': tagLine, 'gameName': gameName}
+        self.extra_context['summoner'] = summoner
         context = self.get_context_data()
-        print(summoner)
+        print(context)
         return self.render_to_response(context)
     
