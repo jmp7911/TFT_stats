@@ -9,7 +9,7 @@ class MatchDto(models.Model):
 class MetadataDto(models.Model):
     data_version = models.CharField(max_length=100)
     match_id = models.CharField(max_length=100)
-    participants = models.ManyToManyField('ParticipantDto')
+    participants = models.ManyToManyField('ParticipantDto', related_name='puuids')
 
 class InfoDto(models.Model):
     game_datetime = models.BigIntegerField()
@@ -72,7 +72,6 @@ class SummonerDto(models.Model):
     account_id = models.CharField(max_length=100)
     puuid = models.CharField(max_length=100)
     summoner_id = models.CharField(max_length=100)
-    summoner_name = models.CharField(max_length=100)
-    summoner_level = models.IntegerField()
-    profile_icon_id = models.IntegerField()
-    revision_date = models.BigIntegerField()
+    summonerLevel = models.IntegerField()
+    profileIconId = models.IntegerField()
+    revisionDate = models.BigIntegerField()

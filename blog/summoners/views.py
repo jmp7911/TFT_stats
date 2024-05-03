@@ -20,6 +20,7 @@ class SummonerListView(TemplateView):
         self.extra_context = {}
         self.extra_context['account'] = {'tagLine': tagLine, 'gameName': gameName}
         self.extra_context['summoner'] = summoner
+        
         context = self.get_context_data()
         print(context)
         return self.render_to_response(context)
