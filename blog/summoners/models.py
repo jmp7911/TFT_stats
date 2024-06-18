@@ -9,7 +9,7 @@ class MatchDto(models.Model):
 class MetadataDto(models.Model):
     data_version = models.CharField(max_length=100)
     match_id = models.CharField(max_length=100)
-    participants = models.ManyToManyField('ParticipantDto', related_name='puuids')
+    participants = models.ManyToManyField('ParticipantDto', related_name='metadata')
 
 class InfoDto(models.Model):
     game_datetime = models.BigIntegerField()

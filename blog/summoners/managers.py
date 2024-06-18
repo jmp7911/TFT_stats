@@ -1,6 +1,7 @@
 import requests
 import os
 from .models import SummonerDto, MetadataDto, InfoDto, ParticipantDto, TraitDto, UnitDto, ItemDto, CompanionDto
+from time import sleep
 
 SUMMONER_URL='https://kr.api.riotgames.com/tft/summoner/v1/summoners/'
 ACCOUNT_URL='https://asia.api.riotgames.com/riot/account/v1/accounts/by-riot-id/'
@@ -44,19 +45,92 @@ class SummonerManager:
             )[0]
         return wrapper
     
-    def get_match(func):
+    # 전적 갱신 함수
+    def update_match(func):
         def wrapper(*args, **kwargs):
             match_ids = func(*args, **kwargs)
+            
             manager = args[0]
             summoner = manager.summoner
-            # ParticipantDto.objects.filter(puuids__in=summoner["puuid"])
-            # for match_id in match_ids:
-            #     response = requests.get(f"{manager.match_url}{match_id}", headers=manager.headers)
-            #     if response.status_code != 200:
-            #         raise Exception("Failed to get a match info.", response.json())
-            #     total_match.append(response.json())
-            # return total_match
+            # metaData = MetadataDto.objects.filter(match_id__in=match_ids)
+            # print(metaData)
+            # ParticipantDto.objects.filter(metadata__in=summoner["puuid"])
+            cnt = 0
+            for match_id in match_ids:
+                cnt += 1
+                if cnt > 20:
+                    sleep(120)
+                    cnt = 0
+                response = requests.get(f"{manager.match_url}{match_id}", headers=manager.headers)
+                if response.status_code != 200:
+                    raise Exception("Failed to get a match info.", response.json())
+                match = response.json()
+                metadata = match["metadata"]
+                info = match["info"]
+                participants = info["participants"]
+                for participant in participants:
+                    companion = participant["companion"]
+                    gold_left = participant["gold_left"]
+                    last_round = participant["last_round"]
+                    level = participant["level"]
+                    placement = participant["placement"]
+                    players_eliminated = participant["players_eliminated"]
+                    puuid = participant["puuid"]
+                    time_eliminated = participant["time_eliminated"]
+                    total_damage_to_players = participant["total_damage_to_players"]
+                    traits = participant["traits"]
+                    units = participant["units"]
+                    for trait in traits:
+                        TraitDto.objects.update_or_create(
+                            name = trait["name"],
+                            defaults={
+                                'num_units' : trait["num_units"],
+                                'style' : trait["style"],
+                                'tier_current' : trait["tier_current"],
+                                'tier_total' : trait["tier_total"],
+                            }
+                        )
+                    for unit in units:
+                        items = unit["items"]
+                        character_id = unit["character_id"]
+                        chosen = unit["chosen"]
+                        name = unit["name"]
+                        rarity = unit["rarity"]
+                        tier = unit["tier"]
+                        for item in items:
+                            ItemDto.objects.update_or_create(
+                                name = item["name"],
+                                defaults={
+                                    'num_units' : item["num_units"],
+                                    'style' : item["style"],
+                                    'tier' : item["tier"],
+                                }
+                            )
+                        UnitDto.objects.update_or_create(
+                            character_id = character_id,
+                            defaults={
+                                'items' : items,
+                                'chosen' : chosen,
+                                'name' : name,
+                                'rarity' : rarity,
+                                'tier' : tier,
+                            }
+                        )
+                    ParticipantDto.objects.update_or_create(
+                        puuid = puuid,
+                        defaults={
+                            'companion' : companion,
+                            'gold_left' : gold_left,
+                            'last_round' : last_round,
+                            'level' : level,
+                            'placement' : placement,
+                            'players_eliminated' : players_eliminated,
+                            'time_eliminated' : time_eliminated,
+                            'total_damage_to_players' : total_damage_to_players,
+                        }
+                    )
         return wrapper
+        
     '''
     function
     '''
@@ -79,13 +153,8 @@ class SummonerManager:
         return response.json()
     
     # 소환사의 match_id 를 가져오는 함수
-    @get_match
-    def get_match_ids(self):
-        if self.summoner is None:
-            raise Exception("Summoner is not set.")
-        puuid = self.summoner["puuid"]
-        
-        
+    @update_match
+    def get_match_ids(self, puuid):
         total_match_ids = []
         for i in range(0, 2**31-1, 100):
             response = requests.get(f"{self.match_url}by-puuid/{puuid}/ids", headers=self.headers, params={"start" : i, "count" : 100, "startTime": self.season_startTime["11"]})
@@ -108,79 +177,4 @@ class SummonerManager:
             raise Exception("Failed to get a league.", response.json())
         return response.json()
 
-    # 전적 갱신 함수
-    def update_match(self):
-        if self.summoner is None:
-            raise Exception("Summoner is not set.")
-        summoner = self.summoner
-        match_ids = self.get_match_ids()
-        
-        for match_id in match_ids:
-            response = requests.get(f"{self.match_url}{match_id}", headers=self.headers)
-            if response.status_code != 200:
-                raise Exception("Failed to get a match info.", response.json())
-            match = response.json()
-            metadata = match["metadata"]
-            info = match["info"]
-            participants = info["participants"]
-            for participant in participants:
-                companion = participant["companion"]
-                gold_left = participant["gold_left"]
-                last_round = participant["last_round"]
-                level = participant["level"]
-                placement = participant["placement"]
-                players_eliminated = participant["players_eliminated"]
-                puuid = participant["puuid"]
-                time_eliminated = participant["time_eliminated"]
-                total_damage_to_players = participant["total_damage_to_players"]
-                traits = participant["traits"]
-                units = participant["units"]
-                for trait in traits:
-                    TraitDto.objects.update_or_create(
-                        name = trait["name"],
-                        defaults={
-                            'num_units' : trait["num_units"],
-                            'style' : trait["style"],
-                            'tier_current' : trait["tier_current"],
-                            'tier_total' : trait["tier_total"],
-                        }
-                    )
-                for unit in units:
-                    items = unit["items"]
-                    character_id = unit["character_id"]
-                    chosen = unit["chosen"]
-                    name = unit["name"]
-                    rarity = unit["rarity"]
-                    tier = unit["tier"]
-                    for item in items:
-                        ItemDto.objects.update_or_create(
-                            name = item["name"],
-                            defaults={
-                                'num_units' : item["num_units"],
-                                'style' : item["style"],
-                                'tier' : item["tier"],
-                            }
-                        )
-                    UnitDto.objects.update_or_create(
-                        character_id = character_id,
-                        defaults={
-                            'items' : items,
-                            'chosen' : chosen,
-                            'name' : name,
-                            'rarity' : rarity,
-                            'tier' : tier,
-                        }
-                    )
-                ParticipantDto.objects.update_or_create(
-                    puuid = puuid,
-                    defaults={
-                        'companion' : companion,
-                        'gold_left' : gold_left,
-                        'last_round' : last_round,
-                        'level' : level,
-                        'placement' : placement,
-                        'players_eliminated' : players_eliminated,
-                        'time_eliminated' : time_eliminated,
-                        'total_damage_to_players' : total_damage_to_players,
-                    }
-                )
+    

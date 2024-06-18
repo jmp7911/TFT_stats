@@ -11,7 +11,7 @@ DATABASES = {
         'NAME': 'TFT',
         'USER': 'root',
         'PASSWORD': 'wlaks451',
-        'HOST': 'localhost',
+        'HOST': 'db',
         'PORT': '3306',
     }
 }

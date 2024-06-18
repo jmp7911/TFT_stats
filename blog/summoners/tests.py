@@ -101,7 +101,7 @@ class SummonerTest(APITestCase):
         # response.status_code = 200
         # response.json.return_value = [] # KR_7002143070
         
-        # match_ids = self.manager.get_match_ids()
+        match_ids = self.manager.get_match_ids()
         
         # self.assertIsInstance(match_ids, list)
-        pass
+        # pass
