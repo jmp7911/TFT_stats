@@ -104,4 +104,4 @@ class SummonerTest(APITestCase):
         # match_ids = self.manager.get_match_ids()
         
         # self.assertIsInstance(match_ids, list)
-        # pass
+        pass
