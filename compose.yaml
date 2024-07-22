@@ -22,14 +22,18 @@ services:
           path: .
   db:
     image: mysql
+    container_name: mysql
     platform: linux/amd64
+    env_file:
+      - blog/.env
+    environment:
+      - MYSQL_ROOT_PASSWORD:${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE:${MYSQL_DATABASE}
+      - MYSQL_PASSWORD:${MYSQL_PASSWORD}
     ports:
       - 3306:3306
     volumes:
       - db-data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: wlaks451
-      MYSQL_DATABASE: TFT
     healthcheck:
       test: ['CMD-SHELL', 'mysqladmin ping -h 127.0.0.1 -u root --password=$$MYSQL_ROOT_PASSWORD']
       interval: 10s

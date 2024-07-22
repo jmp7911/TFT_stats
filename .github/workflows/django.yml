@@ -1,11 +1,5 @@
 name: Django CI
-env:
-  DJANGO_SECRET_KEY: ${{secrets.DJANGO_SECRET_KEY}}
-  DEBUG: ${{secrets.DEBUG}}
-  DJANGO_SETTINGS_MODULE: ${{secrets.DJANGO_SETTINGS_MODULE}}
-  RIOT_API_DEVELOPMENT_KEY: ${{secrets.RIOT_API_DEVELOPMENT_KEY}}
-  RIOT_API_KEY: ${{secrets.RIOT_API_KEY}}
-  SUMMONER_URL: ${{secrets.SUMMONER_URL}}
+
 on:
   push:
     branches: [ "dev" ]
@@ -13,8 +7,7 @@ on:
     branches: [ "dev" ]
 
 jobs:
-  build:
-
+  job1_django:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
@@ -39,4 +32,23 @@ jobs:
         coverage run manage.py test
         coverage report
         
-    
+  job2_docker:
+    needs: job1_django
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      -
+        name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ vars.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
