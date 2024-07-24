@@ -19,6 +19,7 @@ ENV PYTHONUNBUFFERED=1
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y gcc default-libmysqlclient-dev pkg-config \
+    && apt-get install -y git \ 
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -26,16 +27,17 @@ WORKDIR /app
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
 ARG UID=10001
+
 RUN adduser \
     --disabled-password \
     --gecos "" \
-    --home "/nonexistent" \
-    --shell "/sbin/nologin" \
+    --home "/app" \
     --no-create-home \
     --uid "${UID}" \
     appuser
 
 RUN chown -R appuser:appuser /app
+
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a cache mount to /root/.cache/pip to speed up subsequent builds.
 # Leverage a bind mount to requirements.txt to avoid having to copy them into

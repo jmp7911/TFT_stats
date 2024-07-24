@@ -1,6 +1,6 @@
 import requests
 import os
-from .models import SummonerDto, MetadataDto, InfoDto, ParticipantDto, TraitDto, UnitDto, ItemDto, CompanionDto
+from .models import SummonerDto, MetadataDto, InfoDto, ParticipantDto, TraitDto, UnitDto, ItemDto, CompanionDto, MatchDto
 from time import sleep
 
 SUMMONER_URL='https://kr.api.riotgames.com/tft/summoner/v1/summoners/'
@@ -22,6 +22,7 @@ class SummonerManager:
     summoner = None
     '''
     decorator
+    ========================================================
     '''
     # puuid를 이용해 소환사 정보를 가져오는 함수에 사용
     def get_summoner(func):
@@ -52,21 +53,22 @@ class SummonerManager:
             
             manager = args[0]
             summoner = manager.summoner
-            # metaData = MetadataDto.objects.filter(match_id__in=match_ids)
-            # print(metaData)
-            # ParticipantDto.objects.filter(metadata__in=summoner["puuid"])
-            cnt = 0
+            
             for match_id in match_ids:
-                cnt += 1
-                if cnt > 20:
-                    sleep(120)
-                    cnt = 0
+                row = MetadataDto.objects.filter(match_id=match_id).count()
+                if row > 0:
+                    continue
+                    
                 response = requests.get(f"{manager.match_url}{match_id}", headers=manager.headers)
                 if response.status_code != 200:
                     raise Exception("Failed to get a match info.", response.json())
                 match = response.json()
                 metadata = match["metadata"]
                 info = match["info"]
+                MatchDto.objects.create(
+                    metadata=MetadataDto.objects.create(metadata),
+                    info=InfoDto.objects.create(info),
+                )
                 participants = info["participants"]
                 for participant in participants:
                     companion = participant["companion"]
@@ -116,7 +118,7 @@ class SummonerManager:
                                 'tier' : tier,
                             }
                         )
-                    ParticipantDto.objects.update_or_create(
+                    return ParticipantDto.objects.update_or_create(
                         puuid = puuid,
                         defaults={
                             'companion' : companion,
@@ -132,6 +134,8 @@ class SummonerManager:
         return wrapper
         
     '''
+    decorator
+    ========================================================
     function
     '''
     # 소환사 이름으로 소환사 정보를 가져오는 함수 (deprecated)
@@ -177,4 +181,3 @@ class SummonerManager:
             raise Exception("Failed to get a league.", response.json())
         return response.json()
 
-    

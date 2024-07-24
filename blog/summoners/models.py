@@ -21,6 +21,7 @@ class InfoDto(models.Model):
     queue_id = models.IntegerField()
 
 class ParticipantDto(models.Model):
+    augments = models.ManyToManyField('AugmentDto')
     companion = models.ForeignKey('CompanionDto', on_delete=models.CASCADE)
     gold_left = models.IntegerField()
     last_round = models.IntegerField()
@@ -34,6 +35,8 @@ class ParticipantDto(models.Model):
     units = models.ManyToManyField('UnitDto')
     
 class TraitDto(models.Model):
+    # class TraitName(models.TextChoices):
+    #     Set10_Brawler = '난동꾼'
     name = models.CharField(max_length=100)
     num_units = models.IntegerField()
     style = models.IntegerField()
@@ -75,3 +78,6 @@ class SummonerDto(models.Model):
     summonerLevel = models.IntegerField()
     profileIconId = models.IntegerField()
     revisionDate = models.BigIntegerField()
+    
+class AugmentDto(models.Model):
+    pass
