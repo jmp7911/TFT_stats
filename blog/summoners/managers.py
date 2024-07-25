@@ -1,6 +1,6 @@
 import requests
 import os
-from .models import SummonerDto, MetadataDto, InfoDto, ParticipantDto, TraitDto, UnitDto, ItemDto, CompanionDto, MatchDto
+from .models import SummonerDto, MetadataDto, InfoDto, ParticipantDto, TraitDto, UnitDto, CompanionDto, MatchDto, ItemDto
 from time import sleep
 
 SUMMONER_URL='https://kr.api.riotgames.com/tft/summoner/v1/summoners/'
@@ -65,13 +65,16 @@ class SummonerManager:
                 match = response.json()
                 metadata = match["metadata"]
                 info = match["info"]
-                MatchDto.objects.create(
-                    metadata=MetadataDto.objects.create(metadata),
-                    info=InfoDto.objects.create(info),
-                )
                 participants = info["participants"]
                 for participant in participants:
-                    companion = participant["companion"]
+                    companion = CompanionDto.objects.update_or_create(
+                        defaults={
+                            'content_ID': participant["companion"]["content_ID"],
+                            'item_ID': participant["companion"]["item_ID"],
+                            'skin_ID': participant["companion"]["skin_ID"],
+                            'species': participant["companion"]["species"],
+                        }
+                    )[0]
                     gold_left = participant["gold_left"]
                     last_round = participant["last_round"]
                     level = participant["level"]
@@ -82,43 +85,8 @@ class SummonerManager:
                     total_damage_to_players = participant["total_damage_to_players"]
                     traits = participant["traits"]
                     units = participant["units"]
-                    for trait in traits:
-                        TraitDto.objects.update_or_create(
-                            name = trait["name"],
-                            defaults={
-                                'num_units' : trait["num_units"],
-                                'style' : trait["style"],
-                                'tier_current' : trait["tier_current"],
-                                'tier_total' : trait["tier_total"],
-                            }
-                        )
-                    for unit in units:
-                        items = unit["items"]
-                        character_id = unit["character_id"]
-                        chosen = unit["chosen"]
-                        name = unit["name"]
-                        rarity = unit["rarity"]
-                        tier = unit["tier"]
-                        for item in items:
-                            ItemDto.objects.update_or_create(
-                                name = item["name"],
-                                defaults={
-                                    'num_units' : item["num_units"],
-                                    'style' : item["style"],
-                                    'tier' : item["tier"],
-                                }
-                            )
-                        UnitDto.objects.update_or_create(
-                            character_id = character_id,
-                            defaults={
-                                'items' : items,
-                                'chosen' : chosen,
-                                'name' : name,
-                                'rarity' : rarity,
-                                'tier' : tier,
-                            }
-                        )
-                    return ParticipantDto.objects.update_or_create(
+                                        
+                    participantObj = ParticipantDto.objects.update_or_create(
                         puuid = puuid,
                         defaults={
                             'companion' : companion,
@@ -130,7 +98,38 @@ class SummonerManager:
                             'time_eliminated' : time_eliminated,
                             'total_damage_to_players' : total_damage_to_players,
                         }
-                    )
+                    )[0]
+                    
+                    for trait in traits:
+                        participantObj.traits.add(TraitDto.objects.update_or_create(
+                            name = trait["name"],
+                            defaults={
+                                'num_units' : trait["num_units"],
+                                'style' : trait["style"],
+                                'tier_current' : trait["tier_current"],
+                                'tier_total' : trait["tier_total"],
+                            }
+                        )[0])
+                    for unit in units:
+                        character_id = unit["character_id"]
+                        name = unit["name"]
+                        rarity = unit["rarity"]
+                        tier = unit["tier"]
+                        
+                        UnitObj = UnitDto.objects.update_or_create(
+                            character_id = character_id,
+                            defaults={
+                                'name' : name,
+                                'rarity' : rarity,
+                                'tier' : tier,
+                            }
+                        )[0]
+                        
+                        for item in unit["itemNames"]:
+                            UnitObj.items.add(ItemDto.objects.update_or_create(
+                                name=item
+                            )[0])
+                        
         return wrapper
         
     '''

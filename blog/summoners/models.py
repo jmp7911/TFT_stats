@@ -46,28 +46,16 @@ class TraitDto(models.Model):
 class UnitDto(models.Model):
     items = models.ManyToManyField('ItemDto')
     character_id = models.CharField(max_length=100)
-    chosen = models.CharField(max_length=100)
     name = models.CharField(max_length=100)
     rarity = models.IntegerField()
     tier = models.IntegerField()
-    
+
 class ItemDto(models.Model):
-    class ItemName(models.TextChoices):
-        B_F_SWORD = 'B.F. Sword'
-        NEEDLESSLY_LARGE_ROD = 'Needlessly Large Rod'
-        RECURVE_BOW = 'Recurve Bow'
-        SPARRING_GLOVES = 'Sparring Gloves'
-        TEAR_OF_THE_GODDESS = 'Tear of the Goddess'
-        CHAIN_VEST = 'Chain Vest'
-        GIANT_S_BELT = 'Giant_s Belt'
-        NEGATRON_CLOAK = 'Negatron Cloak'
-    name = models.CharField(max_length=100, choices=ItemName.choices)
-    num_units = models.IntegerField()
-    style = models.IntegerField()
-    tier = models.IntegerField()
-    
+    name = models.CharField(max_length=100)
+
 class CompanionDto(models.Model):
     content_ID = models.CharField(max_length=100)
+    item_ID = models.CharField(max_length=100, blank=True)
     skin_ID = models.CharField(max_length=100)
     species = models.CharField(max_length=100)
     
