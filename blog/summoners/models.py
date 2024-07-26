@@ -1,5 +1,5 @@
 from django.db import models
-
+import json
 # Create your models here.
 
 class MatchDto(models.Model):
@@ -9,12 +9,20 @@ class MatchDto(models.Model):
 class MetadataDto(models.Model):
     data_version = models.CharField(max_length=100)
     match_id = models.CharField(max_length=100)
-    participants = models.ManyToManyField('ParticipantDto', related_name='metadata')
+    participants = models.TextField()
+    
+    def get_participants(self):
+        return json.loads(self.participants)
+    
+    def set_participants(self, participants):
+        self.participants = json.dumps(participants)
 
 class InfoDto(models.Model):
     game_datetime = models.BigIntegerField()
     game_length = models.FloatField()
-    game_variation = models.CharField(max_length=100)
+    gameId = models.BigIntegerField()
+    mapId = models.IntegerField()
+    gameCreation = models.BigIntegerField()
     game_version = models.CharField(max_length=100)
     participants = models.ManyToManyField('ParticipantDto')
     tft_set_number = models.IntegerField()

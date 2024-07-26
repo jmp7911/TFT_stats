@@ -53,19 +53,54 @@ class SummonerManager:
             
             manager = args[0]
             summoner = manager.summoner
-            
+            # 100 requests every 2 minutes
+            # 20 requests every 1 second
+            cnt = 0
             for match_id in match_ids:
                 row = MetadataDto.objects.filter(match_id=match_id).count()
                 if row > 0:
                     continue
-                    
-                response = requests.get(f"{manager.match_url}{match_id}", headers=manager.headers)
-                if response.status_code != 200:
-                    raise Exception("Failed to get a match info.", response.json())
+                cnt += 1
+                while True:
+                    response = requests.get(f"{manager.match_url}{match_id}", headers=manager.headers)
+                    if response.status_code == 429 and response.json()["status"]["message"] == "Rate limit exceeded":
+                        if cnt % 20 == 0:
+                            sleep(1)
+                        if cnt % 100 == 0:
+                            sleep(120)
+                            cnt = 0
+                    elif response.status_code == 200:
+                        break
+                    else:
+                        raise Exception("Failed to get a match.", response.json())                    
                 match = response.json()
                 metadata = match["metadata"]
+                metaObj = MetadataDto.objects.update_or_create(
+                    match_id = metadata["match_id"],
+                    defaults={
+                        'data_version' : metadata["data_version"],
+                    }
+                )[0]
+                metaObj.set_participants(metadata["participants"])
                 info = match["info"]
                 participants = info["participants"]
+                info.pop("participants")
+                infoObj = InfoDto.objects.update_or_create(
+                    game_datetime = info["game_datetime"],
+                    defaults={
+                        'gameId' : info["gameId"],
+                        'mapId' : info["mapId"],
+                        'game_length' : info["game_length"],
+                        'gameCreation' : info["gameCreation"],
+                        'game_version' : info["game_version"],
+                        'tft_set_number' : info["tft_set_number"],
+                        'queue_id' : info["queue_id"],
+                    }
+                )[0]
+                MatchDto.objects.update_or_create(
+                    metadata = metaObj,
+                    info = infoObj
+                )
                 for participant in participants:
                     companion = CompanionDto.objects.update_or_create(
                         defaults={
@@ -129,7 +164,9 @@ class SummonerManager:
                             UnitObj.items.add(ItemDto.objects.update_or_create(
                                 name=item
                             )[0])
-                        
+                    
+                    participantObj.units.add(UnitObj)
+                    infoObj.participants.add(participantObj)
         return wrapper
         
     '''
