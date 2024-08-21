@@ -127,7 +127,7 @@
 
     <script>
         async function update_match(puuid) {
-            await fetch('{% url "summoner_match" %}', {
+            await fetch('{% url "summoner_update" %}', {
                 method: 'POST',
                 body: JSON.stringify({puuid: puuid}),
                 headers: {

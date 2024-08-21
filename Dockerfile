@@ -22,8 +22,6 @@ RUN apt-get update \
     && apt-get install -y git \ 
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
 ARG UID=10001
@@ -36,7 +34,8 @@ RUN adduser \
     --uid "${UID}" \
     appuser
 
-RUN chown -R appuser:appuser /app
+WORKDIR /app
+
 
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a cache mount to /root/.cache/pip to speed up subsequent builds.
@@ -48,9 +47,11 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 # Switch to the non-privileged user to run the application.
 USER appuser
+RUN mkdir -p /app
+WORKDIR /app
 
 # Copy the source code into the container.
-COPY . .
+COPY --chown=appuser:appuser . .
 
 # Expose the port that the application listens on.
 EXPOSE 8000

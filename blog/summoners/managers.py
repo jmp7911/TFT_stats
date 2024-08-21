@@ -15,7 +15,7 @@ class SummonerManager:
     account_url = ACCOUNT_URL
     match_url = MATCH_URL
     league_url = LEAGUE_URL
-    season_startTime = {"11" : 1710892800}
+    season_startTime = {"11" : 1710892800, "12": 1722416400}
     headers = {}
     headers['Content-Type'] = 'application/json'
     headers['X-Riot-Token'] = os.environ.get('RIOT_API_KEY')
@@ -79,6 +79,7 @@ class SummonerManager:
                     match_id = metadata["match_id"],
                     defaults={
                         'data_version' : metadata["data_version"],
+                        'participants' : 'test', 
                     }
                 )[0]
                 metaObj.set_participants(metadata["participants"])

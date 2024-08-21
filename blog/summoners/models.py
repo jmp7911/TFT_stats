@@ -16,6 +16,7 @@ class MetadataDto(models.Model):
     
     def set_participants(self, participants):
         self.participants = json.dumps(participants)
+        self.save()
 
 class InfoDto(models.Model):
     game_datetime = models.BigIntegerField()

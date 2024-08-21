@@ -10,15 +10,15 @@ from .managers import SummonerManager
 
 class SummonerListView(TemplateView):
     template_name = 'summoners/stats.html'
-    
+    manager = SummonerManager()
     
     def get(self, request, *args, **kwargs):
         search = request.GET.get('search').split("#")
         
         tagLine = search[1]
         gameName = search[0]
-        manager = SummonerManager()
-        summoner = manager.get_summoner_by_account(tagLine, gameName)
+        
+        summoner = self.manager.get_summoner_by_account(tagLine, gameName)
         
         self.extra_context = {}
         self.extra_context['account'] = {'tagLine': tagLine, 'gameName': gameName}
@@ -29,6 +29,13 @@ class SummonerListView(TemplateView):
         
         return self.render_to_response(context)
 
+    def post(self, request, *args, **kwargs):
+        body = json.loads(self.request.body)
+        puuid = body["puuid"]
+        self.manager.get_match_ids(puuid)
+        
+        return HttpResponse("OK")
+        
 class SummonerMatchView(View):
     def post(self, *args, **kwargs):
         body = json.loads(self.request.body)
